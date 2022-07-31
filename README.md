@@ -1,0 +1,1 @@
+This repository is just a placehodler for some notes that I have written while trying to dunerstand the working of Starknet devnet by Shardlabs. Please use at your own discretion.

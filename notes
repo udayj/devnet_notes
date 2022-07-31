@@ -1,0 +1,17 @@
+Server.py
+This is the starting point of the devnet. It initializes a Flask app and uses meinheld web server to serve the http requests made to the devnet. The flask app is just a wrapper around the Starknet state object from the Starknet testing framework.
+
+This is the file that can be modified if you need any customisation while starting up the server.
+Use this script to run without meinheld https://github.com/Shard-Labs/starknet-devnet/blob/master/scripts/starknet-devnet-debug.sh
+
+For speeding up use the lite-mode. The devnet gives an error if you send too many transactions simultaneously since the state object updates cannot be handled quickly and there are conflicitng updates. To get around this, the trick I used is to run the devnet with just the flask webserver. Initialise with lite mode - you need to be ok with multiple transactions getting the same transaction hash though.
+
+Starknetwrapper.py
+
+This is the most important section of the code. StarknetWrapper is an object that wraps a Starknet state object internally. It stores the data that needs to be returned by the server like contract states, storage, transactions etc. 
+
+The deploy function here creates a Deploy Transaction call and calls the deploy function on the internal starknet object. The starknet contract object returned by this call is stored in the DevnetContracts field inside the wrapper object.
+The (DevnetContracts)[https://github.com/Shard-Labs/starknet-devnet/blob/master/starknet_devnet/contracts.py] class stores the deployed contracts of the devnet.
+
+The instance of the DevnetTransaction is stored by the wrapper object using the DevnetTransactions class.
+
