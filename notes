@@ -14,4 +14,5 @@ The deploy function here creates a Deploy Transaction call and calls the deploy 
 The [DevnetContracts](https://github.com/Shard-Labs/starknet-devnet/blob/master/starknet_devnet/contracts.py) class stores the deployed contracts of the devnet.
 
 The instance of the DevnetTransaction is stored by the wrapper object using the DevnetTransactions class.
+The deploy function expects a Deploy type Transaction object as an argument (whereas the internal Starknet state object's deploy function expects the contract_class, constructor calldata and contract address salt). This deploy transaction is provided by the add_transaction function inside this file https://github.com/Shard-Labs/starknet-devnet/blob/master/starknet_devnet/blueprints/gateway.py - this is where the transaction data is parsed and loaded into a Transaction object (actually done inside shared.py). 
 
