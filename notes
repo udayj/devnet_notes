@@ -10,9 +10,14 @@ Starknetwrapper.py
 
 This is the most important section of the code. StarknetWrapper is an object that wraps a Starknet state object internally. It stores the data that needs to be returned by the server like contract states, storage, transactions etc. 
 
-The deploy function here creates a Deploy Transaction call and calls the deploy function on the internal starknet object. The starknet contract object returned by this call is stored in the DevnetContracts field inside the wrapper object.
+Deploy Contract
+The wrapper deploy function expects a Deploy type Transaction object as an argument (whereas the internal Starknet state object's deploy function expects the contract_class, constructor calldata and contract address salt). This deploy transaction is provided by the add_transaction function inside this file https://github.com/Shard-Labs/starknet-devnet/blob/master/starknet_devnet/blueprints/gateway.py - this is where the transaction data is parsed and loaded into a Transaction object (actually done inside shared.py). 
+
+The wrapper deploy function first creates an instance of InternalDeploy (from starkware.starknet.business_logic.internal_transaction) Transaction object. This object represents an internal transaction in the starknet system. This object stores, amongst other fields, the contract class hash (which is calculated based on the contract class / contract definition available from the Transaction object that is passed as an argument to this deploy function), the deployed contract address (it is calculated deterministically based on salt, class hash, constructor calldata and deployer address (0)), transaction hash (this is again calculated deterministically based on deployed version, contract address, constructor call data and chain id).
+
+The wrapper deploy function then calls the deploy function on the internal starknet object. The starknet contract object returned by this call is stored in the DevnetContracts field inside the wrapper object.
 The [DevnetContracts](https://github.com/Shard-Labs/starknet-devnet/blob/master/starknet_devnet/contracts.py) class stores the deployed contracts of the devnet.
 
-The instance of the DevnetTransaction is stored by the wrapper object using the DevnetTransactions class.
-The deploy function expects a Deploy type Transaction object as an argument (whereas the internal Starknet state object's deploy function expects the contract_class, constructor calldata and contract address salt). This deploy transaction is provided by the add_transaction function inside this file https://github.com/Shard-Labs/starknet-devnet/blob/master/starknet_devnet/blueprints/gateway.py - this is where the transaction data is parsed and loaded into a Transaction object (actually done inside shared.py). 
+After calling the deploy function on the internal starknet state object, the internal __update_state function is called. This generates the block info, does the state update calculation and block state_root calculation (unless using lite-mode).
+The instance of the DevnetTransaction is stored by the wrapper object using the DevnetTransactions class. The __store_transaction function stores the transaction and also generates a new block using the generate function of the DevnetBlocks class.
 
